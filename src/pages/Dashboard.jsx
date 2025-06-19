@@ -36,11 +36,11 @@ export default function Dashboard() {
           </div>
 
           {user && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-1 sm:gap-2 text-right">
               <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold">
                 {getInitials(user.email)}
               </div>
-              <span className="text-sm">{user.email}</span>
+              <span className="text-sm break-all">{user.email}</span>
             </div>
           )}
         </div>
@@ -95,4 +95,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}     
+}

@@ -7,56 +7,68 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 function Bills() {
-  const [rent, setRent] = useState("");
-  const [electricity, setElectricity] = useState("");
-  const [internet, setInternet] = useState("");
+  const [bills, setBills] = useState([{ name: "", amount: "" }]);
+
+  const handleChange = (index, field, value) => {
+    const updated = [...bills];
+    updated[index][field] = value;
+    setBills(updated);
+  };
+
+  const addBillField = () => {
+    setBills([...bills, { name: "", amount: "" }]);
+  };
+
+  const removeBillField = (index) => {
+    const updated = [...bills];
+    updated.splice(index, 1);
+    setBills(updated);
+  };
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
-    if (!user) return alert("You must be logged in.");
+    if (!user) return alert("Login required");
 
     try {
       await addDoc(collection(db, "bills"), {
-        rent,
-        electricity,
-        internet,
         user: user.uid,
+        bills: bills.filter((b) => b.name && b.amount),
         date: new Date().toISOString(),
       });
-      alert("✅ Bill added!");
-      setRent("");
-      setElectricity("");
-      setInternet("");
+      alert("✅ Bills submitted!");
+      setBills([{ name: "", amount: "" }]);
     } catch (err) {
       console.error(err);
-      alert("❌ Failed to save bills.");
+      alert("❌ Error saving bills.");
     }
   };
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h2>🏠 Bills & Utilities</h2>
-      <input
-        placeholder="Rent"
-        value={rent}
-        onChange={(e) => setRent(e.target.value)}
-      />
-      <br />
-      <input
-        placeholder="Electricity Bill"
-        value={electricity}
-        onChange={(e) => setElectricity(e.target.value)}
-      />
-      <br />
-      <input
-        placeholder="Internet Bill"
-        value={internet}
-        onChange={(e) => setInternet(e.target.value)}
-      />
-      <br />
-      <button onClick={handleSubmit} style={{ marginTop: "1rem" }}>
-        Submit
-      </button>
+      <h2>📋 Add Custom Bills</h2>
+      {bills.map((bill, i) => (
+        <div key={i} style={{ marginBottom: "10px" }}>
+          <input
+            placeholder="Bill Name (e.g. Water)"
+            value={bill.name}
+            onChange={(e) => handleChange(i, "name", e.target.value)}
+            style={{ marginRight: "5px" }}
+          />
+          <input
+            placeholder="Amount"
+            value={bill.amount}
+            onChange={(e) => handleChange(i, "amount", e.target.value)}
+            style={{ marginRight: "5px" }}
+          />
+          {bills.length > 1 && (
+            <button onClick={() => removeBillField(i)}>❌</button>
+          )}
+        </div>
+      ))}
+
+      <button onClick={addBillField}>➕ Add Another Bill</button>
+      <br /><br />
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 }

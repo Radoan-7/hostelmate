@@ -1,9 +1,7 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Copy your Firebase config here 👇
 const firebaseConfig = {
   apiKey: "AIzaSyDQSsj8vRsRr3ww36JZ1M-eb0alh5Gwqj0",
 
@@ -16,10 +14,12 @@ const firebaseConfig = {
   messagingSenderId: "157708179127",
 
   appId: "1:157708179127:web:048b09c366965885405f32"
+,
 };
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 export {app};
 
